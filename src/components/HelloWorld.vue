@@ -66,11 +66,11 @@
               </div>
             </div>
             <div class="form-check form-switch">
-              <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" v-model="modoDesenvolvedor" @click="converterLeituraJson()">
+              <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" v-model="modoDesenvolvedor">
               <label class="form-check-label" for="flexSwitchCheckDefault">Modo desenvolvedor</label>
             </div>
             <div v-if="modoDesenvolvedor">
-              <textarea class="form-control" rows="20" v-model="blocosParaLeituraString">
+              <textarea class="form-control" rows="20" :value="tratatamentoBlocoString" @input="converterBlocoStringParaJson($event.target)">
                   
               </textarea>
             </div>
@@ -80,156 +80,293 @@
             <div v-else>
               <div v-for="(item, index) in blocosParaLeituraJson" :key="index" class="mt-4">
                 
-                <h5>Bloco {{index + 1}}</h5>
-                <!-- Detalhes começo -->
-                <div class="btn-group" role="group" aria-label="Basic outlined example">
-                  <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapseDetalhes' + index" aria-expanded="false" aria-controls="collapseExample">
-                    Detalhes
-                  </button>
-                  <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapseOptions' + index" aria-expanded="false" aria-controls="collapseExample">
-                    Opções
-                  </button>
-                  <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapseFields' + index" aria-expanded="false" aria-controls="collapseExample">
-                    Fields
-                  </button>
-                  <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapseCheckList' + index" aria-expanded="false" aria-controls="collapseExample">
-                    CheckList
-                  </button>
-                </div>
-                
-                <div class="collapse" :id="'collapseDetalhes' + index">
-                  <div class="card card-body">
-                    <div class="mb-4 row">
-                      
-                      <!-- Input pagina começo -->
-                      <label @for="item.search_pages" class="col-sm-2 col-form-label">Pagina</label>
-                      <div class="col-sm-10 mb-2">
-                        <input type="number" class="form-control" v-model="item.search_pages" @value="item.search_pages">
-                      </div>
-                      <!-- Input pagina Fim -->
-                      
-                      <!-- Input Estilo começo -->
-                      <label @for="item.table_style" class="col-sm-2 col-form-label">Estilo</label>
-                      <div class="col-sm-10">
-                        <select class="form-select" v-model="item.table_style">
-                          <option selected value="stream">stream</option>
-                          <option value="lattice">lattice</option>
-                        </select>
-                      </div>
-                      <!-- Input Estilo Fim -->
+                <div v-if="'group' in item">
+                  <h5>Group {{index + 1}}</h5>
+                  <!-- Botões começo -->
+                  <div class="btn-group" role="group" aria-label="Basic outlined example">
+                    <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapseDetalhes' + index" aria-expanded="false" aria-controls="collapseExample">
+                      Detalhes
+                    </button>
+                    <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapseOptions' + index" aria-expanded="false" aria-controls="collapseExample">
+                      Opções
+                    </button>
+                    <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapseFields' + index" aria-expanded="false" aria-controls="collapseExample">
+                      Fields
+                    </button>
+                    <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapseCheckList' + index" aria-expanded="false" aria-controls="collapseExample">
+                      CheckList
+                    </button>
+                  </div>
+                  <!-- Botões fim-->
 
-                      <!-- Input pagina começo -->
-                     
-                      <div class="row mt-2">
-                         <label @for="item.search_pages" class="col-sm-2 col-form-label">Area</label>
-                        <div class="col-sm-2 mb-2" v-for="(coord, index) in item.table_areas" :key="index">
-                          <input type="number" class="form-control" v-model="item.table_areas[index]" @value="item.table_areas[index]">
-                        </div>
-                      </div>
-                      <!-- Input pagina Fim -->
-
-                      <!-- Input Campo invalido começo -->
-                      <label @for="item.on_invalid_field" class="col-sm-2 col-form-label">Campo inválido</label>
-                      <div class="col-sm-10">
-                        <select class="form-select" v-model="item.on_invalid_field">
-                          <option selected value="about">about</option>
-                          <option value="ignore">ignore</option>
-                          <option value="ignore_all">ignore_all</option>
-                        </select>
-                      </div>
-                      <!-- Input Estilo Fim -->
-
+                  <!-- Input Campo invalido começo -->
+                  <div class="mt-3 row">
+                    <label @for="item.on_invalid_field" class="col-sm-3 col-form-label">Campo inválido</label>
+                    <div class="col-sm-6">
+                      <select class="form-select" v-model="item.on_invalid_field">
+                        <option selected value="about">about</option>
+                        <option value="ignore">ignore</option>
+                        <option value="ignore_all">ignore_all</option>
+                      </select>
                     </div>
                   </div>
-                </div>
-                <!-- Detalhes Fim -->
+                  <!-- Input Estilo Fim -->
+                  <div v-for="(itemGroup, indexGroup) in item.group" :key="indexGroup" class="ml-10">
+                    
 
-                <!-- Opções Começo -->
-                <div class="collapse" :id="'collapseOptions' + index">
-                  <div class="card card-body">
-                    <div class="mb-4 row">
-                      
-                      <div class="input-group">
-                        <div class="col-sm-8 mb-2">
-                          <select class="form-select" v-model="leituraOpcao">
-                            <option selected value="fix_upper_margin">fix_upper_margin</option>
-                            <option value="fix_lower_margin">fix_lower_margin</option>
-                            <option value="line_text">line_text</option>
-                            <option value="text">text</option>
-                          </select>
-                        </div>
-                        <div class="col-sm-4 mb-2">
-                          <button @click="adicionarOpcaoNaLeitura(index)" class="btn btn-success mb-3">Adicionar</button>
+                    <!-- Detalhes começo -->
+                    <div class="collapse" :id="'collapseDetalhes' + index">
+                    <h5 class="mt-3">Bloco {{indexGroup + 1}}</h5>
+                      <div class="card card-body">
+                        <div class="mb-4 row">
+                          <!-- Input pagina começo -->
+                          <label @for="itemGroup.search_pages" class="col-sm-2 col-form-label">Pagina</label>
+                          <div class="col-sm-10 mb-2">
+                            <input type="number" class="form-control" v-model="itemGroup.search_pages" @value="itemGroup.search_pages">
+                          </div>
+                          <!-- Input pagina Fim -->
+
+                          <!-- Input Estilo começo -->
+                          <label @for="itemGroup.table_style" class="col-sm-2 col-form-label">Estilo</label>
+                          <div class="col-sm-10">
+                            <select class="form-select" v-model="itemGroup.table_style">
+                              <option selected value="stream">stream</option>
+                              <option value="lattice">lattice</option>
+                            </select>
+                          </div>
+                          <!-- Input Estilo Fim -->
+
+                          <!-- Input Area começo -->
+                          <div class="row mt-2">
+                            <label @for="itemGroup.search_pages" class="col-sm-2 col-form-label">Area</label>
+                            <div class="col-sm-2 mb-2" v-for="(coord, indexCoord) in itemGroup.table_areas" :key="indexCoord">
+                              <input type="number" class="form-control" v-model="itemGroup.table_areas[indexCoord]" @value="itemGroup.table_areas[indexCoord]">
+                            </div>
+                          </div>
+                          <!-- Input Area Fim -->
+
+                          <!-- Input Campo invalido começo -->
+                          <label @for="itemGroup.on_invalid_field" class="col-sm-2 col-form-label">Campo inválido</label>
+                          <div class="col-sm-10">
+                            <select class="form-select" v-model="itemGroup.on_invalid_field">
+                              <option selected value="about">about</option>
+                              <option value="ignore">ignore</option>
+                              <option value="ignore_all">ignore_all</option>
+                            </select>
+                          </div>
+                          <!-- Input Estilo Fim -->
+
                         </div>
                       </div>
+                    </div>
+                    <!-- Detalhes Fim -->
 
-                      <div v-for="(itemOpcao, indexOpcao) in item.options" :key="indexOpcao" class="row mb-2">
-                        <label class="col-sm-2 col-form-label">{{indexOpcao}}</label>
+                    <!-- Opções Começo -->
+                  <div class="collapse" :id="'collapseOptions' + index">
+                  <h5 class="mt-3">Bloco {{indexGroup + 1}}</h5>
+                    <div class="card card-body">
+                      <div class="mb-4 row">
+                        
+                        <div class="input-group">
+                          <div class="col-sm-8 mb-2">
+                            <select class="form-select" v-model="leituraOpcao">
+                              <option selected value="fix_upper_margin">fix_upper_margin</option>
+                              <option value="fix_lower_margin">fix_lower_margin</option>
+                              <option value="line_text">line_text</option>
+                              <option value="text">text</option>
+                              <option value="search_depth">search_depth</option>
+                              <option value="search_step">search_step</option>
+                            </select>
+                          </div>
+                          <div class="col-sm-4 mb-2">
+                            <button @click="adicionarOpcaoNaLeituraGroup(index, indexGroup)" class="btn btn-success mb-3">Adicionar</button>
+                          </div>
+                        </div>
+                        <div v-for="(itemOpcao, indexOpcao) in itemGroup.options" :key="indexOpcao" class="row mt-2 mb-2">
+                          <label class="col-sm-4 col-form-label">{{indexOpcao}}</label>
+                          <div class="col-sm-4" v-if="indexOpcao == 'search_depth' || indexOpcao == 'search_step'">
+                            <div class="col-sm-8">
+                              <input type="text" class="form-control" v-model="itemGroup.options[indexOpcao]" @value="itemOpcao">
+                            </div>
+                          </div>
+                          <div v-else class="col-sm-4">
+                            <select class="form-select" v-model="itemGroup.options[indexOpcao]">
+                              <option selected value="True">Sim</option>
+                              <option value="False">Não</option>
+                            </select>
+                          </div>
+                          <div class="col-sm-4 mb-2">
+                            <button @click="removerOpcaoNaLeituraGroup(index, indexGroup, indexOpcao)" class="btn btn-danger mb-3">Remover</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Opções Fim -->
+                  </div>
+                </div>
+                <div v-else>
+                  <h5>Bloco {{index + 1}}</h5>
+                  <!-- Detalhes começo -->
+                  <div class="btn-group" role="group" aria-label="Basic outlined example">
+                    <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapseDetalhes' + index" aria-expanded="false" aria-controls="collapseExample">
+                      Detalhes
+                    </button>
+                    <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapseOptions' + index" aria-expanded="false" aria-controls="collapseExample">
+                      Opções
+                    </button>
+                    <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapseFields' + index" aria-expanded="false" aria-controls="collapseExample">
+                      Fields
+                    </button>
+                    <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapseCheckList' + index" aria-expanded="false" aria-controls="collapseExample">
+                      CheckList
+                    </button>
+                  </div>
+                  
+                  <div class="collapse" :id="'collapseDetalhes' + index">
+                    <div class="card card-body">
+                      <div class="mb-4 row">
+                        
+                        <!-- Input pagina começo -->
+                        <label @for="item.search_pages" class="col-sm-2 col-form-label">Pagina</label>
+                        <div class="col-sm-10 mb-2">
+                          <input type="number" class="form-control" v-model="item.search_pages" @value="item.search_pages">
+                        </div>
+                        <!-- Input pagina Fim -->
+                        
+                        <!-- Input Estilo começo -->
+                        <label @for="item.table_style" class="col-sm-2 col-form-label">Estilo</label>
                         <div class="col-sm-10">
-                          <select class="form-select" v-model="item.options[indexOpcao]">
-                            <option selected value="True">Sim</option>
-                            <option value="False">Não</option>
+                          <select class="form-select" v-model="item.table_style">
+                            <option selected value="stream">stream</option>
+                            <option value="lattice">lattice</option>
                           </select>
                         </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <!-- Opções Fim -->
-                
-                <!-- Fields Começo -->
-                <div class="collapse" :id="'collapseFields' + index">
-                  <div class="card card-body">
-                    <div class="mb-4 row">
-                      <h5 class="mb-4">
-                          Fields
-                        </h5>
-                      <div v-for="(field, indexField) in item.fields" :key="indexField">
-                        
-                        <!-- Input pagina começo -->
-                        <div class="row mt-2">
-                          <div class="col-sm-3 mb-2" v-for="(dado, indexDado) in field" :key="indexDado">
-                            <input type="text" class="form-control" v-model="field[indexDado]" @value="field[indexDado]">
-                            
-                          </div>
-                          <button @click="removerBlocoFields(indexField, index)" class="btn btn-danger mt-3">delete</button>
-                          <hr class="mt-3">
-                        </div>
-                        <!-- Input pagina Fim -->
-                        
-                      </div>
-                      <button @click="adicionarBlocoFields(index)" class="btn btn-secondary mt-3  mr-5">+ Bloco</button>
-                    </div>
-                  </div>
-                </div>
-                <!-- Fields Fim -->
+                        <!-- Input Estilo Fim -->
 
-                <!-- CheckList Começo -->
-                <div class="collapse" :id="'collapseCheckList' + index">
-                  <div class="card card-body">
-                    <div class="mb-4 row">
-                      <h5 class="mb-4">
-                          CheckList
-                        </h5>
-                      <div v-for="(checklist, indexChecklist) in item.checklist" :key="indexChecklist">
-                        
-                        <!-- Input pagina começo -->
+                        <!-- Input Area começo -->
+                      
                         <div class="row mt-2">
-                          <div class="col-sm-3 mb-2" v-for="(dado, indexDado) in checklist" :key="indexDado">
-                            <input type="text" class="form-control" v-model="checklist[indexDado]" @value="checklist[indexDado]">
-                            
+                          <label @for="item.search_pages" class="col-sm-2 col-form-label">Area</label>
+                          <div class="col-sm-2 mb-2" v-for="(coord, indexCoord) in item.table_areas" :key="indexCoord">
+                            <input type="number" class="form-control" v-model="item.table_areas[indexCoord]" @value="item.table_areas[indexCoord]">
                           </div>
-                          <button @click="removerBlocoChecklist(indexChecklist, index)" class="btn btn-danger mt-3">delete</button>
-                          <hr class="mt-3">
                         </div>
-                        <!-- Input pagina Fim -->
-                        
+                        <!-- Input Area Fim -->
+
+                        <!-- Input Campo invalido começo -->
+                        <label @for="item.on_invalid_field" class="col-sm-2 col-form-label">Campo inválido</label>
+                        <div class="col-sm-10">
+                          <select class="form-select" v-model="item.on_invalid_field">
+                            <option selected value="about">about</option>
+                            <option value="ignore">ignore</option>
+                            <option value="ignore_all">ignore_all</option>
+                          </select>
+                        </div>
+                        <!-- Input Estilo Fim -->
+
                       </div>
-                      <button @click="adicionarBlocoChecklist(index)" class="btn btn-secondary mt-3  mr-5">+ Bloco</button>
                     </div>
                   </div>
+                  <!-- Detalhes Fim -->
+
+                  <!-- Opções Começo -->
+                  <div class="collapse" :id="'collapseOptions' + index">
+                    <div class="card card-body">
+                      <div class="mb-4 row">
+                        
+                        <div class="input-group">
+                          <div class="col-sm-8 mb-2">
+                            <select class="form-select" v-model="leituraOpcao">
+                              <option selected value="fix_upper_margin">fix_upper_margin</option>
+                              <option value="fix_lower_margin">fix_lower_margin</option>
+                              <option value="line_text">line_text</option>
+                              <option value="text">text</option>
+                              <option value="search_depth">search_depth</option>
+                              <option value="search_step">search_step</option>
+                            </select>
+                          </div>
+                          <div class="col-sm-4 mb-2">
+                            <button @click="adicionarOpcaoNaLeitura(index)" class="btn btn-success mb-3">Adicionar</button>
+                          </div>
+                        </div>
+                        <div v-for="(itemOpcao, indexOpcao) in item.options" :key="indexOpcao" class="row mt-2 mb-2">
+                          <label class="col-sm-4 col-form-label">{{indexOpcao}}</label>
+                          <div class="col-sm-4" v-if="indexOpcao == 'search_depth' || indexOpcao == 'search_step'">
+                            <div class="col-sm-8">
+                              <input type="text" class="form-control" v-model="item.options[indexOpcao]" @value="itemOpcao">
+                            </div>
+                          </div>
+                          <div v-else class="col-sm-4">
+                            <select class="form-select" v-model="item.options[indexOpcao]">
+                              <option selected value="True">Sim</option>
+                              <option value="False">Não</option>
+                            </select>
+                          </div>
+                          <div class="col-sm-4 mb-2">
+                            <button @click="removerOpcaoNaLeitura(index, indexOpcao)" class="btn btn-danger mb-3">Remover</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Opções Fim -->
+                  
+                  <!-- Fields Começo -->
+                  <div class="collapse" :id="'collapseFields' + index">
+                    <div class="card card-body">
+                      <div class="mb-4 row">
+                        <h5 class="mb-4">
+                            Fields
+                          </h5>
+                        <div v-for="(field, indexField) in item.fields" :key="indexField">
+                          
+                          <!-- Input pagina começo -->
+                          <div class="row mt-2">
+                            <div class="col-sm-3 mb-2" v-for="(dado, indexDado) in field" :key="indexDado">
+                              <input type="text" class="form-control" v-model="field[indexDado]" @value="field[indexDado]">
+                              
+                            </div>
+                            <button @click="removerBlocoFields(indexField, index)" class="btn btn-danger mt-3">delete</button>
+                            <hr class="mt-3">
+                          </div>
+                          <!-- Input pagina Fim -->
+                          
+                        </div>
+                        <button @click="adicionarBlocoFields(index)" class="btn btn-secondary mt-3  mr-5">+ Bloco</button>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Fields Fim -->
+
+                  <!-- CheckList Começo -->
+                  <div class="collapse" :id="'collapseCheckList' + index">
+                    <div class="card card-body">
+                      <div class="mb-4 row">
+                        <h5 class="mb-4">
+                            CheckList
+                          </h5>
+                        <div v-for="(checklist, indexChecklist) in item.checklist" :key="indexChecklist">
+                          
+                          <!-- Input pagina começo -->
+                          <div class="row mt-2">
+                            <div class="col-sm-3 mb-2" v-for="(dado, indexDado) in checklist" :key="indexDado">
+                              <input type="text" class="form-control" v-model="checklist[indexDado]" @value="checklist[indexDado]">
+                              
+                            </div>
+                            <button @click="removerBlocoChecklist(indexChecklist, index)" class="btn btn-danger mt-3">delete</button>
+                            <hr class="mt-3">
+                          </div>
+                          <!-- Input pagina Fim -->
+                          
+                        </div>
+                        <button @click="adicionarBlocoChecklist(index)" class="btn btn-secondary mt-3  mr-5">+ Bloco</button>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- CheckList Fim -->
                 </div>
-                <!-- CheckList Fim -->
+                
               </div>
             </div>
             <!-- Leitura com interface Fim -->
@@ -244,7 +381,7 @@ export default {
   data() {
     return {
       leituraOpcao : '',
-      blocosParaLeituraString : '',
+      blocosParaLeituraString : [],
       blocosParaLeituraJson : [
         {
           'search_pages' : '123',
@@ -278,7 +415,95 @@ export default {
           'checklist' : [
             
           ]
+        },  
+        {
+            'on_invalid_field': 'ignore',
+            'group':
+            [
+              {
+                'search_pages': '1',
+                  'table_style': 'stream',
+                  'table_areas': [ 19 ,330 ,573 ,86 ],
+                  'on_invalid_field': 'ignore',
+                  'options': {
+                    'fix_upper_margin': 'True',
+                    'fix_lower_margin': 'True',      
+                    'line_text': 'True',
+                    'search_depth': '10',
+                    'search_step': '10'
+                  },
+              },
+              {
+                  'search_pages': '2',
+                  'table_style': 'stream',
+                  'table_areas': [ 22, 786, 555, 632 ],
+                  'on_invalid_field': 'ignore',
+                  'options': {
+                    'fix_upper_margin': 'True',
+                    'fix_lower_margin': 'True',      
+                    'line_text': 'True',
+                    'search_depth': '10',
+                    'search_step': '10'
+                  },
+              },
+            ],
+            'fields': [      
+            [ 'modelo', 'None','ve.?culo: [^ ]+ ' ],         
+            [ 'ano_modelo', 'None', 'ano modelo: ',' |$'],
+            [ 'ano_fabricacao', 'None', 'ano fabrica.?.?o: ',' |$'],
+            [ 'lotacao', 'None', 'qtde passageiros:\\s+'],
+            [ 'chassi', 'None','chassi:',' |$'],
+            [ 'placa', 'None','placa: ',' |$']                
+          ],
+          'checklist': [
+            ['ano_modelo','[0-9]+$'],
+            ['ano_fabricacao','[0-9]+$']
+          ] 
         },
+        {
+            'on_invalid_field': 'ignore',
+            'group':
+            [
+              {
+                'search_pages': '1',
+                  'table_style': 'stream',
+                  'table_areas': [ 19 ,330 ,573 ,86 ],
+                  'on_invalid_field': 'ignore',
+                  'options': {
+                    'fix_upper_margin': 'True',
+                    'fix_lower_margin': 'True',      
+                    'line_text': 'True',
+                    'search_depth': '10',
+                    'search_step': '10'
+                  },
+              },
+              {
+                  'search_pages': '2',
+                  'table_style': 'stream',
+                  'table_areas': [ 22, 786, 555, 632 ],
+                  'on_invalid_field': 'ignore',
+                  'options': {
+                    'fix_upper_margin': 'True',
+                    'fix_lower_margin': 'True',      
+                    'line_text': 'True',
+                    'search_depth': '10',
+                    'search_step': '10'
+                  },
+              },
+            ],
+            'fields': [      
+            [ 'modelo', 'None','ve.?culo: [^ ]+ ' ],         
+            [ 'ano_modelo', 'None', 'ano modelo: ',' |$'],
+            [ 'ano_fabricacao', 'None', 'ano fabrica.?.?o: ',' |$'],
+            [ 'lotacao', 'None', 'qtde passageiros:\\s+'],
+            [ 'chassi', 'None','chassi:',' |$'],
+            [ 'placa', 'None','placa: ',' |$']                
+          ],
+          'checklist': [
+            ['ano_modelo','[0-9]+$'],
+            ['ano_fabricacao','[0-9]+$']
+          ] 
+        }
       ],
       dadosParaEnviar : [],
       dadosParaReceber : '',
@@ -293,17 +518,21 @@ export default {
     
   },
   computed: {
-    
+    tratatamentoBlocoString(){
+      var leituraString = String.raw`${JSON.stringify(this.blocosParaLeituraJson, null, 4)}`.replaceAll("\\\\", "\\")
+
+      return leituraString
+    },
   },
   methods: {
-    converterLeituraJson(){
-      if(this.modoDesenvolvedor == true){
-        this.blocosParaLeituraJson = JSON.parse(this.blocosParaLeituraString)
-        console.log(this.blocosParaLeituraJson)
-      }else {
-        this.blocosParaLeituraString = JSON.stringify(this.blocosParaLeituraJson, null, 4)
-      }
+
+    converterBlocoStringParaJson(event){
+      //var teste = String.raw`${event.value}`
+      console.log(event.value)
+
+      this.blocosParaLeituraJson = eval(event.value.replaceAll("\\", "\\\\").replaceAll("None", "'None'"))
     },
+    
     adicionarCampo(){
 
       this.dadosParaEnviar.push(
@@ -337,6 +566,9 @@ export default {
     .post('http://127.0.0.1:5000/criarleitura', JSON.stringify(this.dadosParaEnviar))
     .then(res => this.dadosParaReceber = res.body)
 
+    for (var item in this.dadosParaReceber){
+      this.blocosParaLeituraJson.push(item)
+    }
     console.log(this.dadosParaReceber)
     },
 
@@ -382,8 +614,34 @@ export default {
       this.blocosParaLeituraJson[index].checklist.splice(indexChecklist, 1)
     },
 
+    removerOpcaoNaLeitura(index, indexOpcao){
+      console.log(index)
+      console.log(indexOpcao)
+      delete this.blocosParaLeituraJson[index].options[indexOpcao]
+    },
+
+    removerOpcaoNaLeituraGroup(index, indexGroup, indexOpcao){
+      console.log(index)
+      console.log(indexGroup)
+      console.log(indexOpcao)
+      delete this.blocosParaLeituraJson[index].group[indexGroup].options[indexOpcao]
+    },
+
     adicionarOpcaoNaLeitura(index){
-      this.blocosParaLeituraJson[index].options[this.leituraOpcao] = "True"
+      if (this.leituraOpcao == 'search_depth' || this.leituraOpcao == 'search_step') {
+        this.blocosParaLeituraJson[index].options[this.leituraOpcao] = "10"
+      } else {
+        this.blocosParaLeituraJson[index].options[this.leituraOpcao] = "True"
+      }
+      this.leituraOpcao = ''
+    },
+    adicionarOpcaoNaLeituraGroup(index, indexGroup){
+      if (this.leituraOpcao == 'search_depth' || this.leituraOpcao == 'search_step') {
+        this.blocosParaLeituraJson[index].group[indexGroup].options[this.leituraOpcao] = "10"
+      } else {
+        this.blocosParaLeituraJson[index].group[indexGroup].options[this.leituraOpcao] = "True"
+      }
+      this.leituraOpcao = ''
     }
   }
 }
