@@ -162,49 +162,111 @@
                     <!-- Detalhes Fim -->
 
                     <!-- Opções Começo -->
-                  <div class="collapse" :id="'collapseOptions' + index">
-                  <h5 class="mt-3">Bloco {{indexGroup + 1}}</h5>
-                    <div class="card card-body">
-                      <div class="mb-4 row">
-                        
-                        <div class="input-group">
-                          <div class="col-sm-8 mb-2">
-                            <select class="form-select" v-model="leituraOpcao">
-                              <option selected value="fix_upper_margin">fix_upper_margin</option>
-                              <option value="fix_lower_margin">fix_lower_margin</option>
-                              <option value="line_text">line_text</option>
-                              <option value="text">text</option>
-                              <option value="search_depth">search_depth</option>
-                              <option value="search_step">search_step</option>
-                            </select>
-                          </div>
-                          <div class="col-sm-4 mb-2">
-                            <button @click="adicionarOpcaoNaLeituraGroup(index, indexGroup)" class="btn btn-success mb-3">Adicionar</button>
-                          </div>
-                        </div>
-                        <div v-for="(itemOpcao, indexOpcao) in itemGroup.options" :key="indexOpcao" class="row mt-2 mb-2">
-                          <label class="col-sm-4 col-form-label">{{indexOpcao}}</label>
-                          <div class="col-sm-4" v-if="indexOpcao == 'search_depth' || indexOpcao == 'search_step'">
-                            <div class="col-sm-8">
-                              <input type="text" class="form-control" v-model="itemGroup.options[indexOpcao]" @value="itemOpcao">
+                    <div class="collapse" :id="'collapseOptions' + index">
+                    <h5 class="mt-3">Bloco {{indexGroup + 1}}</h5>
+                      <div class="card card-body">
+                        <div class="mb-4 row">
+                          
+                          <div class="input-group">
+                            <div class="col-sm-8 mb-2">
+                              <select class="form-select" v-model="leituraOpcao">
+                                <option selected value="fix_upper_margin">fix_upper_margin</option>
+                                <option value="fix_lower_margin">fix_lower_margin</option>
+                                <option value="line_text">line_text</option>
+                                <option value="text">text</option>
+                                <option value="search_depth">search_depth</option>
+                                <option value="search_step">search_step</option>
+                              </select>
+                            </div>
+                            <div class="col-sm-4 mb-2">
+                              <button @click="adicionarOpcaoNaLeituraGroup(index, indexGroup)" class="btn btn-success mb-3">Adicionar</button>
                             </div>
                           </div>
-                          <div v-else class="col-sm-4">
-                            <select class="form-select" v-model="itemGroup.options[indexOpcao]">
-                              <option selected value="True">Sim</option>
-                              <option value="False">Não</option>
-                            </select>
-                          </div>
-                          <div class="col-sm-4 mb-2">
-                            <button @click="removerOpcaoNaLeituraGroup(index, indexGroup, indexOpcao)" class="btn btn-danger mb-3">Remover</button>
+                          <div v-for="(itemOpcao, indexOpcao) in itemGroup.options" :key="indexOpcao" class="row mt-2 mb-2">
+                            <label class="col-sm-4 col-form-label">{{indexOpcao}}</label>
+                            <div class="col-sm-4" v-if="indexOpcao == 'search_depth' || indexOpcao == 'search_step'">
+                              <div class="col-sm-8">
+                                <input type="text" class="form-control" v-model="itemGroup.options[indexOpcao]" @value="itemOpcao">
+                              </div>
+                            </div>
+                            <div v-else class="col-sm-4">
+                              <select class="form-select" v-model="itemGroup.options[indexOpcao]">
+                                <option selected value="True">Sim</option>
+                                <option value="False">Não</option>
+                              </select>
+                            </div>
+                            <div class="col-sm-4 mb-2">
+                              <button @click="removerOpcaoNaLeituraGroup(index, indexGroup, indexOpcao)" class="btn btn-danger mb-3">Remover</button>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <!-- Opções Fim -->
+                    <!-- Opções Fim -->
+
+                    <!-- Fields Começo -->
+                    <div class="collapse" :id="'collapseFields' + index">
+                      <div class="card card-body">
+                        <div class="mb-4 row">
+                          <h5 class="mb-4">
+                            Fields
+                          </h5>
+                          
+                          <div v-for="(field, indexField) in item.fields" :key="indexField">
+                            
+                            <!-- Input pagina começo -->
+                            <div class="row mt-2">
+                              <div class="col-sm-6 mb-2" v-for="(dado, indexDado) in field" :key="indexDado">
+                                <input type="text" class="form-control" v-model="field[indexDado]" @value="field[indexDado]">
+                                
+                              </div>
+                              <div>
+                                <button @click="adicionarCampoFields(index, indexField)" class="btn btn-success mt-3 col-sm-3">adicionar</button>
+                                &nbsp;&nbsp;
+                                <button @click="removerBlocoFields(indexField, index, indexDado)" class="btn btn-danger mt-3 col-sm-3">RemoveAll</button>
+                                
+                              </div>
+                              <hr class="mt-3">
+                            </div>
+                            <!-- Input pagina Fim -->
+                            
+                          </div>
+                          <button @click="adicionarBlocoFields(index)" class="btn btn-secondary mt-3  mr-5">+ Bloco</button>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Fields Fim -->
+
+                    <!-- CheckList Começo -->
+                    <div class="collapse" :id="'collapseCheckList' + index">
+                      <div class="card card-body">
+                        <div class="mb-4 row">
+                          <h5 class="mb-4">
+                              CheckList
+                            </h5>
+                          <div v-for="(checklist, indexChecklist) in item.checklist" :key="indexChecklist">
+                            
+                            <!-- Input pagina começo -->
+                            <div class="row mt-2">
+                              <div class="col-sm-6 mb-2" v-for="(dado, indexDado) in checklist" :key="indexDado">
+                                <input type="text" class="form-control" v-model="checklist[indexDado]" @value="checklist[indexDado]">
+                                
+                              </div>
+                              <div>
+                                <button @click="removerBlocoChecklist(indexChecklist, index)" class="btn btn-danger mt-3 col-sm-3">delete</button>
+                              </div><hr class="mt-3">
+                            </div>
+                            <!-- Input pagina Fim -->
+                            
+                          </div>
+                          <button @click="adicionarBlocoChecklist(index)" class="btn btn-secondary mt-3  mr-5">+ Bloco</button>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- CheckList Fim -->
                   </div>
                 </div>
+                
                 <div v-else>
                   <h5>Bloco {{index + 1}}</h5>
                   <!-- Detalhes começo -->
@@ -317,17 +379,23 @@
                     <div class="card card-body">
                       <div class="mb-4 row">
                         <h5 class="mb-4">
-                            Fields
-                          </h5>
+                          Fields
+                        </h5>
+                        
                         <div v-for="(field, indexField) in item.fields" :key="indexField">
                           
                           <!-- Input pagina começo -->
                           <div class="row mt-2">
-                            <div class="col-sm-3 mb-2" v-for="(dado, indexDado) in field" :key="indexDado">
+                            <div class="col-sm-6 mb-2" v-for="(dado, indexDado) in field" :key="indexDado">
                               <input type="text" class="form-control" v-model="field[indexDado]" @value="field[indexDado]">
                               
                             </div>
-                            <button @click="removerBlocoFields(indexField, index)" class="btn btn-danger mt-3">delete</button>
+                            <div>
+                              <button @click="adicionarCampoFields(index, indexField)" class="btn btn-success mt-3 col-sm-3">adicionar</button>
+                              &nbsp;&nbsp;
+                              <button @click="removerBlocoFields(indexField, index, indexDado)" class="btn btn-danger mt-3 col-sm-3">RemoveAll</button>
+                              
+                            </div>
                             <hr class="mt-3">
                           </div>
                           <!-- Input pagina Fim -->
@@ -350,12 +418,13 @@
                           
                           <!-- Input pagina começo -->
                           <div class="row mt-2">
-                            <div class="col-sm-3 mb-2" v-for="(dado, indexDado) in checklist" :key="indexDado">
+                            <div class="col-sm-6 mb-2" v-for="(dado, indexDado) in checklist" :key="indexDado">
                               <input type="text" class="form-control" v-model="checklist[indexDado]" @value="checklist[indexDado]">
                               
                             </div>
-                            <button @click="removerBlocoChecklist(indexChecklist, index)" class="btn btn-danger mt-3">delete</button>
-                            <hr class="mt-3">
+                            <div>
+                              <button @click="removerBlocoChecklist(indexChecklist, index)" class="btn btn-danger mt-3 col-sm-3">delete</button>
+                            </div><hr class="mt-3">
                           </div>
                           <!-- Input pagina Fim -->
                           
@@ -380,130 +449,10 @@
 export default {
   data() {
     return {
+      tipoFields : '',
       leituraOpcao : '',
       blocosParaLeituraString : [],
       blocosParaLeituraJson : [
-        {
-          'search_pages' : '123',
-          'table_style': 'stream',
-          'table_areas' : [10, 10, 10, 10],
-          'on_invalid_field': 'ignore',
-          'options' : {
-            'fix_upper_margin': 'True',
-            'fix_lower_margin': 'True',
-            'line_text': 'True'
-          },
-          'fields' : [
-            ['emissao', 'None', '', ''],
-            ['emissao2', 'None', '', ''],
-          ],
-          'checklist' : [
-            ['', '']
-          ]
-        },
-        {
-          'search_pages' : '456',
-          'table_style': 'lattice',
-          'table_areas' : [10, 10, 10, 10],
-          'on_invalid_field': 'ignore',
-          'options' : {
-            'fix_upper_margin': 'True',
-            'fix_lower_margin': 'True',
-            'line_text': 'True'
-          },
-          'fields' : [],
-          'checklist' : [
-            
-          ]
-        },  
-        {
-            'on_invalid_field': 'ignore',
-            'group':
-            [
-              {
-                'search_pages': '1',
-                  'table_style': 'stream',
-                  'table_areas': [ 19 ,330 ,573 ,86 ],
-                  'on_invalid_field': 'ignore',
-                  'options': {
-                    'fix_upper_margin': 'True',
-                    'fix_lower_margin': 'True',      
-                    'line_text': 'True',
-                    'search_depth': '10',
-                    'search_step': '10'
-                  },
-              },
-              {
-                  'search_pages': '2',
-                  'table_style': 'stream',
-                  'table_areas': [ 22, 786, 555, 632 ],
-                  'on_invalid_field': 'ignore',
-                  'options': {
-                    'fix_upper_margin': 'True',
-                    'fix_lower_margin': 'True',      
-                    'line_text': 'True',
-                    'search_depth': '10',
-                    'search_step': '10'
-                  },
-              },
-            ],
-            'fields': [      
-            [ 'modelo', 'None','ve.?culo: [^ ]+ ' ],         
-            [ 'ano_modelo', 'None', 'ano modelo: ',' |$'],
-            [ 'ano_fabricacao', 'None', 'ano fabrica.?.?o: ',' |$'],
-            [ 'lotacao', 'None', 'qtde passageiros:\\s+'],
-            [ 'chassi', 'None','chassi:',' |$'],
-            [ 'placa', 'None','placa: ',' |$']                
-          ],
-          'checklist': [
-            ['ano_modelo','[0-9]+$'],
-            ['ano_fabricacao','[0-9]+$']
-          ] 
-        },
-        {
-            'on_invalid_field': 'ignore',
-            'group':
-            [
-              {
-                'search_pages': '1',
-                  'table_style': 'stream',
-                  'table_areas': [ 19 ,330 ,573 ,86 ],
-                  'on_invalid_field': 'ignore',
-                  'options': {
-                    'fix_upper_margin': 'True',
-                    'fix_lower_margin': 'True',      
-                    'line_text': 'True',
-                    'search_depth': '10',
-                    'search_step': '10'
-                  },
-              },
-              {
-                  'search_pages': '2',
-                  'table_style': 'stream',
-                  'table_areas': [ 22, 786, 555, 632 ],
-                  'on_invalid_field': 'ignore',
-                  'options': {
-                    'fix_upper_margin': 'True',
-                    'fix_lower_margin': 'True',      
-                    'line_text': 'True',
-                    'search_depth': '10',
-                    'search_step': '10'
-                  },
-              },
-            ],
-            'fields': [      
-            [ 'modelo', 'None','ve.?culo: [^ ]+ ' ],         
-            [ 'ano_modelo', 'None', 'ano modelo: ',' |$'],
-            [ 'ano_fabricacao', 'None', 'ano fabrica.?.?o: ',' |$'],
-            [ 'lotacao', 'None', 'qtde passageiros:\\s+'],
-            [ 'chassi', 'None','chassi:',' |$'],
-            [ 'placa', 'None','placa: ',' |$']                
-          ],
-          'checklist': [
-            ['ano_modelo','[0-9]+$'],
-            ['ano_fabricacao','[0-9]+$']
-          ] 
-        }
       ],
       dadosParaEnviar : [],
       dadosParaReceber : '',
@@ -599,8 +548,14 @@ export default {
 
     adicionarBlocoFields(index){
       this.blocosParaLeituraJson[index].fields.push([
-        '', '', '', ''
+        '', ''
       ])
+    },
+
+    adicionarCampoFields(index, indexField){
+      this.blocosParaLeituraJson[index].fields[indexField].push(
+        ''
+      )
     },
     removerBlocoFields(indexField, index){
       this.blocosParaLeituraJson[index].fields.splice(indexField, 1)
@@ -615,16 +570,15 @@ export default {
     },
 
     removerOpcaoNaLeitura(index, indexOpcao){
-      console.log(index)
-      console.log(indexOpcao)
       delete this.blocosParaLeituraJson[index].options[indexOpcao]
+      this.modoDesenvolvedor = true
+      this.modoDesenvolvedor = false
     },
 
     removerOpcaoNaLeituraGroup(index, indexGroup, indexOpcao){
-      console.log(index)
-      console.log(indexGroup)
-      console.log(indexOpcao)
       delete this.blocosParaLeituraJson[index].group[indexGroup].options[indexOpcao]
+      this.modoDesenvolvedor = true
+      this.modoDesenvolvedor = false
     },
 
     adicionarOpcaoNaLeitura(index){
